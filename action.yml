@@ -175,6 +175,16 @@ inputs:
       comma-separated list: 'ruff,eslint,shellcheck,golangci-lint,rubocop,clippy'.
     required: false
     default: 'auto'
+  max-input-chars:
+    description: >
+      Maximum number of characters allowed in the combined diff + context
+      sent to the model. When a PR exceeds this limit, CriticAI
+      intelligently truncates by dropping low-value files first
+      (auto-generated code like *.Designer.cs, lock files, large
+      migrations) while keeping the most reviewable code. Set to 0 to
+      disable truncation (will fail on oversized PRs).
+    required: false
+    default: '150000'
   mode:
     description: 'Execution mode: "review" (default) runs the PR review, "commands" handles @criticai comment replies'
     required: false
@@ -213,4 +223,5 @@ runs:
         INPUT_TEMPERATURE: ${{ inputs.temperature }}
         INPUT_TOP_P: ${{ inputs.top-p }}
         INPUT_HOME_DIRECTORY: ${{ inputs.home-directory }}
+        INPUT_MAX_INPUT_CHARS: ${{ inputs.max-input-chars }}
         INPUT_LINTERS: ${{ inputs.linters }}

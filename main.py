@@ -20,6 +20,7 @@ from criticai.renderer import render_comment
 from criticai.resolve import resolve_outdated_threads
 from criticai.review import ReviewEngine
 from criticai.rules import load_rules
+from criticai.truncate import truncate_diff
 
 
 def main() -> None:
@@ -116,6 +117,9 @@ def main() -> None:
     # Generate PR description if missing (first review only)
     if not existing_id:
         maybe_generate_description(github, config, diff)
+
+    # Truncate diff if it exceeds the model's context budget
+    diff = truncate_diff(diff, config.max_input_chars)
 
     # Run the AI review (with context, rules, learnings, previous findings)
     raw_output = engine.run(
