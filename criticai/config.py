@@ -37,6 +37,7 @@ class Config:
     temperature: float
     top_p: float
     home_directory: str  # path prefix filter; empty = review all files
+    max_input_chars: int  # max chars for the diff before truncation kicks in
 
     @classmethod
     def from_env(cls) -> "Config":
@@ -57,4 +58,5 @@ class Config:
             temperature=float(os.environ["INPUT_TEMPERATURE"]),
             top_p=float(os.environ["INPUT_TOP_P"]),
             home_directory=os.environ.get("INPUT_HOME_DIRECTORY", ""),
+            max_input_chars=int(os.environ.get("INPUT_MAX_INPUT_CHARS", "150000")),
         )

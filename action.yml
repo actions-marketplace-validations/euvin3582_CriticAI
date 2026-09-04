@@ -24,7 +24,7 @@ inputs:
       called through the separate bedrock-mantle endpoint automatically —
       see NOTICE.md.
     required: false
-    default: 'openai.gpt-5.6-sol'
+    default: 'us.anthropic.claude-sonnet-4-20250514-v1:0'
   fallback-model:
     description: >
       Model ID to retry with if the primary `model` call fails for any
@@ -32,7 +32,7 @@ inputs:
       response). Leave empty to disable fallback. Can mix providers, e.g.
       an OpenAI primary with an Anthropic fallback.
     required: false
-    default: 'anthropic.claude-haiku-4-5-20251001-v1:0'
+    default: 'us.anthropic.claude-sonnet-4-20250514-v1:0'
   max-tokens:
     description: >
       Max output tokens. For Anthropic, 3072 is Bedrock's ceiling for this
@@ -41,7 +41,7 @@ inputs:
       tokens — too low a value can make the model spend its whole budget
       reasoning and return no visible text (see NOTICE.md).
     required: false
-    default: 3072
+    default: 8192
   # Custom
   prompt:
     description: >
@@ -175,6 +175,16 @@ inputs:
       comma-separated list: 'ruff,eslint,shellcheck,golangci-lint,rubocop,clippy'.
     required: false
     default: 'auto'
+  max-input-chars:
+    description: >
+      Maximum number of characters allowed in the combined diff + context
+      sent to the model. When a PR exceeds this limit, CriticAI
+      intelligently truncates by dropping low-value files first
+      (auto-generated code like *.Designer.cs, lock files, large
+      migrations) while keeping the most reviewable code. Set to 0 to
+      disable truncation (will fail on oversized PRs).
+    required: false
+    default: '150000'
   mode:
     description: 'Execution mode: "review" (default) runs the PR review, "commands" handles @criticai comment replies'
     required: false
@@ -213,4 +223,5 @@ runs:
         INPUT_TEMPERATURE: ${{ inputs.temperature }}
         INPUT_TOP_P: ${{ inputs.top-p }}
         INPUT_HOME_DIRECTORY: ${{ inputs.home-directory }}
+        INPUT_MAX_INPUT_CHARS: ${{ inputs.max-input-chars }}
         INPUT_LINTERS: ${{ inputs.linters }}
